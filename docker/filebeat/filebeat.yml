@@ -1,0 +1,7 @@
+filebeat.inputs:
+- type: log
+  paths:
+    - /var/lib/docker/containers/*/*-json.log # thu thập logs tất cả các container hiện có trên server
+
+output.logstash:
+  hosts: ["192.168.0.130:5044"]

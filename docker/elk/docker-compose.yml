@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        - ELASTIC_VERSION=${ELK_VERSION}
+        - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    networks:
+      - elk
+    ports:
+      - ${ELASTIC_PORT}:9200
+      - 9300:9300
+
+  kibana:
+    build:
+      context: kibana/
+      args:
+        - KIBANA_VERSION=${ELK_VERSION}
+    networks:
+      - elk
+    ports:
+      - ${KIBANA_PORT}:5601
+
+  logstash:
+    build:
+      context: logstash/
+      args:
+        - LOGSTASH_VERSION=${ELK_VERSION}
+        - ELASTIC_USER=${ELASTIC_USER}
+        - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+        - ELASTIC_PORT=${ELASTIC_PORT}
+        - LOGSTASH_ELASTIC_HOST=${LOGSTASH_ELASTIC_HOST}
+    volumes:
+      - "./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
+    networks:
+      - elk
+
+networks:
+  elk:
+    name: elk
