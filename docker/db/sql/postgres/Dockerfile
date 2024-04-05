@@ -1,0 +1,7 @@
+FROM postgres
+
+ENV POSTGRES_USER username
+ENV POSTGRES_PASSWORD password
+ENV POSTGRES_DB db_test
+
+EXPOSE 5432
