@@ -1,0 +1,81 @@
+# Use root/example as user/password credentials
+version: ${VERSION}
+
+# Check the cluster is connected successfully
+# docker exec -it mongo1 mongosh --eval "rs.status()"
+
+services:
+  mongo1:
+    container_name: mongo1
+    restart: always
+    build: 
+      context: .
+      args:
+        - VERSION=${MONGO_IMAGE_VERSION}
+        - HOST=${HOST}
+        - REPLICATE_NAME=${REPLICATE_NAME}
+        - SERVICE_NAME=mongo1
+    volumes:
+      - ${PATH_BACKUP_DATA}/mongo1/:/data/db/
+    ports:
+      - 27017:27017
+
+  mongo2:
+    container_name: mongo2
+    restart: always
+    build: 
+      context: .
+      args:
+        - VERSION=${MONGO_IMAGE_VERSION}
+        - HOST=${HOST}
+        - REPLICATE_NAME=${REPLICATE_NAME}
+        - SERVICE_NAME=mongo2
+    volumes:
+      - ${PATH_BACKUP_DATA}/mongo2/:/data/db/
+    ports:
+      - 27018:27017
+  
+  mongo3:
+    container_name: mongo3
+    restart: always
+    build: 
+      context: .
+      args:
+        - VERSION=${MONGO_IMAGE_VERSION}
+        - HOST=${HOST}
+        - REPLICATE_NAME=${REPLICATE_NAME}
+        - SERVICE_NAME=mongo3
+    volumes:
+      - ${PATH_BACKUP_DATA}/mongo3/:/data/db/
+    ports:
+      - 27019:27017
+
+  # `mongo_init` should be removed after all mongo db are connected successsfully 
+  mongo_init:
+    container_name: mongo_init
+    restart: "no"
+    build: 
+      context: .
+      dockerfile: mongo_init.Dockerfile
+      args:
+        - VERSION=${MONGO_IMAGE_VERSION}
+        - REPLICATE_NAME=${REPLICATE_NAME}
+        - MONGO_PRIMARY=${MONGO_PRIMARY}
+        - MEMBERS=${MEMBERS}
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+  
+  mongo-express:
+    container_name: mongo_express
+    restart: always
+    build: 
+      context: .
+      dockerfile: mongo_express.Dockerfile
+      args:
+        - MONGO_PRIMARY=${MONGO_PRIMARY}
+    depends_on:
+      - mongo_init
+    ports:
+      - 8081:8081
