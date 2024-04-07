@@ -67,7 +67,7 @@ services:
       - mongo2
       - mongo3
   
-  mongo-express:
+  mongo_express:
     container_name: mongo_express
     restart: always
     build: 
