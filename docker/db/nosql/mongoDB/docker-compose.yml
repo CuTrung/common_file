@@ -11,9 +11,6 @@ services:
     build: 
       context: .
       args:
-        - VERSION=${MONGO_IMAGE_VERSION}
-        - HOST=${HOST}
-        - REPLICATE_NAME=${REPLICATE_NAME}
         - SERVICE_NAME=mongo1
     volumes:
       - ${PATH_BACKUP_DATA}/mongo1/:/data/db/
@@ -26,9 +23,6 @@ services:
     build: 
       context: .
       args:
-        - VERSION=${MONGO_IMAGE_VERSION}
-        - HOST=${HOST}
-        - REPLICATE_NAME=${REPLICATE_NAME}
         - SERVICE_NAME=mongo2
     volumes:
       - ${PATH_BACKUP_DATA}/mongo2/:/data/db/
@@ -41,9 +35,6 @@ services:
     build: 
       context: .
       args:
-        - VERSION=${MONGO_IMAGE_VERSION}
-        - HOST=${HOST}
-        - REPLICATE_NAME=${REPLICATE_NAME}
         - SERVICE_NAME=mongo3
     volumes:
       - ${PATH_BACKUP_DATA}/mongo3/:/data/db/
@@ -58,8 +49,6 @@ services:
       context: .
       dockerfile: mongo_init.Dockerfile
       args:
-        - VERSION=${MONGO_IMAGE_VERSION}
-        - REPLICATE_NAME=${REPLICATE_NAME}
         - MONGO_PRIMARY=${MONGO_PRIMARY}
         - MEMBERS=${MEMBERS}
     depends_on:

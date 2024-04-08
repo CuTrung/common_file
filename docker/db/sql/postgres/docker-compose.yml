@@ -1,0 +1,48 @@
+version: ${VERSION}
+
+services:
+  pg1:
+    container_name: pg1
+    build: 
+      context: .
+      args:
+        - POSTGRES_MASTER=true
+    volumes:
+      - ${PATH_BACKUP_DATA}/pg1:/var/lib/postgresql/data
+    ports:
+      - "${PG_MASTER_PORT}:5432"
+
+  pg2:
+    container_name: pg2
+    build: 
+      context: .
+      args:
+        - POSTGRES_SLAVE=true
+        - POSTGRES_MASTER_HOST=${PG_MASTER_HOST}
+        - POSTGRES_MASTER_PORT=${PG_MASTER_PORT}
+    volumes:
+      - ${PATH_BACKUP_DATA}/pg2:/var/lib/postgresql/data
+      # - ./init_db_secondary.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      - ${PG_MASTER_HOST}
+    ports:
+      - "5433:5432"
+  
+  pg3:
+    container_name: pg3
+    build: 
+      context: .
+      args:
+        - POSTGRES_SLAVE=true
+        - POSTGRES_MASTER_HOST=${PG_MASTER_HOST}
+        - POSTGRES_MASTER_PORT=${PG_MASTER_PORT}
+    volumes:
+      - ${PATH_BACKUP_DATA}/pg3:/var/lib/postgresql/data
+      # - ./init_db_secondary.sql:/docker-entrypoint-initdb.d/init.sql
+    depends_on:
+      - ${PG_MASTER_HOST}
+    ports:
+      - "5434:5432"
+    
+
+  
