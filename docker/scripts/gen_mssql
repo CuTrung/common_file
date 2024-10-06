@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./base/gen_Dockerfile mcr.microsoft.com/mssql/server:2022-latest "ACCEPT_EULA='Y',MSSQL_SA_PASSWORD='Trung@123'" 1433 ../db/sql/

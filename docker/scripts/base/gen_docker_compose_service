@@ -1,0 +1,43 @@
+#!/bin/bash
+
+image=${1-"postgres:latest"}
+envs_param=${2-"ENV_NAME='ENV_VALUE'"}
+port_expose=${3-"9999"}
+destination=${4-"$(pwd)"}
+docker_compose_file_name=$destination/docker-compose.yml
+env_file_name=$destination/.env
+
+image_transfer=$(echo "$image" | sed 's/[[:punct:]]/_/g')
+
+docker_compose_service=$(printf "  ${image_transfer}:
+    container_name: ${image_transfer}
+    restart: always
+    build: 
+      context: .
+      args:"
+)
+
+env_file=$(printf "DOCKER_COMPOSE_VERSION='latest'")
+
+IFS=',' read -ra envs <<< "PORT_EXPOSE='$port_expose', $envs_param"
+
+for env in "${envs[@]}"; do
+    env=$(echo "$env" | sed 's/^ *//; s/ *$//')
+
+    IFS='=' read -r key value <<< "$env"
+
+    docker_compose_service+=$(printf " 
+        - $key=\${$key}"
+    )
+    
+    env_file+=$(printf "\n$key=$value")
+done
+
+docker_compose_service+=$(printf "
+    ports:
+      - '\${PORT_EXPOSE}:\${PORT_EXPOSE}'"
+)
+
+echo "$docker_compose_service" >> $docker_compose_file_name
+
+echo "$env_file" >> $env_file_name

@@ -1,1 +1,3 @@
 **/data
+*.session.sql
+*.vscode

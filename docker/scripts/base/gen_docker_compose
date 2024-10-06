@@ -1,0 +1,19 @@
+#!/bin/bash
+
+image=${1-"postgres:latest"}
+envs_param=${2-"ENV_NAME='ENV_VALUE'"}
+port_expose=${3-"9999"}
+destination=${4-"$(pwd)"}
+docker_compose_file_name=$destination/docker-compose.yml
+
+docker_compose_base=$(printf "
+version: \${DOCKER_COMPOSE_VERSION}
+
+services:"
+)
+
+if [ ! -e "$docker_compose_file_name" ]; then
+  echo "$docker_compose_base" > $docker_compose_file_name
+fi
+
+./base/gen_docker_compose_service $image $envs_param $port_expose $destination

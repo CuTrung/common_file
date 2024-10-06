@@ -1,0 +1,30 @@
+#!/bin/bash
+
+image=${1-"postgres:latest"}
+envs_param=${2-"ENV_NAME='ENV_VALUE',ENV_NAME_2='ENV_VALUE_2'"}
+port_expose=${3-"9999"}
+destination=${4-"$(pwd)"}
+docker_file_path=$destination/$(echo "$image" | sed 's/[[:punct:]]/_/g')
+
+
+docker_file=$(printf "FROM $image")
+
+IFS=',' read -ra envs <<< "$envs_param"
+
+for env in "${envs[@]}"; do
+    env=$(echo "$env" | sed 's/^ *//; s/ *$//')
+
+    IFS='=' read -r key value <<< "$env"
+
+    docker_file+=$(printf "\n\nARG $key=$value \nENV $key=\${$key}")
+done
+
+docker_file+=$(printf "\n
+ARG PORT_EXPOSE='$port_expose'
+EXPOSE \${PORT_EXPOSE}")
+
+
+mkdir -p "$docker_file_path" && echo "$docker_file" > $docker_file_path/Dockerfile
+
+
+./base/gen_docker_compose $image $envs_param $port_expose $docker_file_path
