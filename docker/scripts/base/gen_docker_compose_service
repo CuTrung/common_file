@@ -34,6 +34,9 @@ for env in "${envs[@]}"; do
 done
 
 docker_compose_service+=$(printf "
+    volumes:
+      - volumeName:containerPath:ro
+      - hostPath:containerPath
     ports:
       - '\${PORT_EXPOSE}:\${PORT_EXPOSE}'"
 )
