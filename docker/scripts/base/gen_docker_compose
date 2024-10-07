@@ -16,4 +16,4 @@ if [ ! -e "$docker_compose_file_name" ]; then
   echo "$docker_compose_base" > $docker_compose_file_name
 fi
 
-./base/gen_docker_compose_service $image $envs_param $port_expose $destination
+./docker/scripts/base/gen_docker_compose_service $image $envs_param $port_expose $destination

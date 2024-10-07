@@ -1,0 +1,15 @@
+
+version: ${DOCKER_COMPOSE_VERSION}
+
+services:
+  mcr_microsoft_com_mssql_server_2022_latest:
+    container_name: mcr_microsoft_com_mssql_server_2022_latest
+    restart: always
+    build: 
+      context: .
+      args: 
+        - PORT_EXPOSE=${PORT_EXPOSE} 
+        - ACCEPT_EULA=${ACCEPT_EULA} 
+        - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+    ports:
+      - '${PORT_EXPOSE}:${PORT_EXPOSE}'

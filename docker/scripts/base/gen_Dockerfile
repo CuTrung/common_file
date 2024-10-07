@@ -27,4 +27,4 @@ EXPOSE \${PORT_EXPOSE}")
 mkdir -p "$docker_file_path" && echo "$docker_file" > $docker_file_path/Dockerfile
 
 
-./base/gen_docker_compose $image $envs_param $port_expose $docker_file_path
+./docker/scripts/base/gen_docker_compose $image $envs_param $port_expose $docker_file_path
